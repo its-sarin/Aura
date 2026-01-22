@@ -1,4 +1,4 @@
-// Copyright Votive Sudios
+// Copyright Votive Studios
 
 using UnrealBuildTool;
 

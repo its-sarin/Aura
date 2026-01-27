@@ -4,14 +4,13 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayEffectExtension.h"
+#include "GameFramework/Controller.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	InitHealth(50.f);
-	InitMaxHealth(100.f);
 	InitMana(50.f);
-	InitMaxMana(100.f);
 }
 
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -42,20 +41,20 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 }
 
 // Called just before any modification happens to an attribute.
-void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
-{
-	Super::PreAttributeChange(Attribute, NewValue);
-	
-	// If the changed attribute is health or mana, clamp it between 0 and max values
-	if (Attribute == GetHealthAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
-	}
-	if (Attribute == GetManaAttribute())
-	{
-		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
-	}
-}
+// void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+// {
+// 	Super::PreAttributeChange(Attribute, NewValue);
+// 	
+// 	// If the changed attribute is health or mana, clamp it between 0 and max values
+// 	if (Attribute == GetHealthAttribute())
+// 	{
+// 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxHealth());
+// 	}
+// 	if (Attribute == GetManaAttribute())
+// 	{
+// 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxMana());
+// 	}
+// }
 
 // Helper function to set effect properties from callback data
 void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props)

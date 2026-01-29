@@ -61,6 +61,7 @@ void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallb
 {
 	// Source = causer of the effect, Target = receiver of the effect (owner of this attribute set)
 	
+	// Get effect context and source/target ability system components
 	Props.EffectContextHandle = Data.EffectSpec.GetContext();
 	Props.SourceASC = Props.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
 	

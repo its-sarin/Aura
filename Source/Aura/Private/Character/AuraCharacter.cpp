@@ -37,6 +37,7 @@ int32 AAuraCharacter::GetPlayerLevel()
 	return AuraPlayerState->GetPlayerLevel();
 }
 
+// Called when the character is possessed by a controller
 void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -45,9 +46,10 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 }
 
+// Initialize Ability System Component and Attribute Set
 void AAuraCharacter::InitAbilityActorInfo()
 {
-	// Initialize Ability System and Attribute Set from Player State
+	// Get the AuraPlayerState
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check( AuraPlayerState );
 	

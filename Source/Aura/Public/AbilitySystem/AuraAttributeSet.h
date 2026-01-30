@@ -48,6 +48,10 @@ struct FEffectProperties
 	
 };
 
+// Helper type alias for static delegate function pointers
+template<class T>
+using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
+
 
 /**
  * 
@@ -64,6 +68,9 @@ public:
 	
 	// virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	
+	// Map of gameplay tags to attribute getters
+	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 	
 	/* 
 	 * ------ Primary Attributes ------

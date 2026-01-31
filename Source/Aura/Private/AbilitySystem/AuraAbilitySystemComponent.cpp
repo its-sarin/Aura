@@ -63,7 +63,7 @@ void UAuraAbilitySystemComponent::AbilityInputTagReleased(const FGameplayTag Inp
 	}
 }
 
-// Broadcast when a gameplay effect is applied to self
+// Broadcast when a gameplay effect is applied to self (client)
 void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
                                                 const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {

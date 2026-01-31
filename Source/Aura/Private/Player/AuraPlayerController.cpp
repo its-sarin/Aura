@@ -114,7 +114,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	// If the input tag is not LMB, pass it to ASC
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 
 		return;
 	}
@@ -122,7 +122,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	// If we're targeting an actor, pass the input to ASC
 	if (bTargeting)
 	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}
 	// Otherwise, handle movement
 	else

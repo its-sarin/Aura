@@ -74,6 +74,8 @@ void AAuraPlayerController::SetupInputComponent()
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 	
 	AuraInputComponent->BindAbilityActions(InputConfig, this,
 		&AAuraPlayerController::AbilityInputTagPressed,
@@ -120,7 +122,7 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 	}
 	
 	// If we're targeting an actor, pass the input to ASC
-	if (bTargeting)
+	if (bTargeting || bShiftKeyDown)
 	{
 		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}
@@ -144,21 +146,17 @@ void AAuraPlayerController::AbilityInputTagHeld(const FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(const FGameplayTag InputTag)
 {
-	// If the input tag is not LMB, pass it to ASC
+	// Inform ASC of the input release
+	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+	
+	// If the input tag is not LMB, return
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-
 		return;
 	}
 	
-	// If we're targeting an actor, pass the input to ASC
-	if (bTargeting)
-	{
-		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
-	}
-	// Otherwise, handle movement
-	else
+	// If we're not targeting and shift is not held, handle auto-run logic
+	if (!bTargeting && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (ControlledPawn && FollowTime <= ShortPressThreshold)

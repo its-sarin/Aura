@@ -57,4 +57,6 @@ private:
 	TObjectPtr<USoundBase> LoopingSound;
 	
 	bool bHit = false;
+	
+	void PlayImpactEffects() const;
 };

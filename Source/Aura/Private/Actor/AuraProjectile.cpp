@@ -32,19 +32,6 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 }
 
-void AAuraProjectile::Destroyed()
-{
-	// If we haven't already played the impact effects (i.e., we didn't hit something while on a client, but the server is destroying us)
-	if (!bHit && !HasAuthority())
-	{
-		// Play impact effects
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	}
-	
-	Super::Destroyed();
-}
-
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -66,27 +53,73 @@ void AAuraProjectile::BeginPlay()
 	}
 }
 
+void AAuraProjectile::Destroyed()
+{
+	// Execute the FXs on the client only in the case this projectile's destruction was replicated
+	// before OnBeginOverlap() had a chance to execute.
+	if (!bHit && !HasAuthority())
+	{
+		// Play impact effects
+		PlayImpactEffects();
+	}
+	
+	Super::Destroyed();
+}
+
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Play impact effects
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	// NOTE: We set this projectile's Owner (as well as the Instigator, both replicated properties from AActor)
+	// equal to the source ASC's Avatar Actor (character) through UWorld::SpawnActorDeferred().
+ 
+	AActor* ThisOwner = GetOwner();
 	
-	// If we're the server, destroy the projectile
+	// If the Owner is invalid, destroy this projectile without causing damage or executing the VFX/SFX.
+	// This handles the case when Destroy() has already been called on the Owner (we currently set
+	// a brief lifespan on death for enemy characters), so it's invalid (i.e. either pending kill or null).
+	// If we apply a damage GE while the source character (Owner) is invalid, it ends up triggering an exception in
+	// UExecCalc_Damage::Execute_Implementation() caused by ExecutionParams.GetSourceAbilitySystemComponent() being null.
+	// FIXME: Find a way to allow a projectile with an already destroyed Owner to do damage.
+	// Potential solution: From the base character keep track of the projectiles' lifetime, and when the character dies,
+	// delay calling Destroy() until all projectiles have been destroyed.
+	if (!IsValid(ThisOwner))
+	{
+		bHit = true;
+		Destroy();
+		return;
+	}
+	// Ignore the Owner.
+	if (OtherActor == ThisOwner) return;
+ 
+	// NOTE: We want to execute the FXs in both server and client as soon as possible.
+	PlayImpactEffects();
+ 
 	if (HasAuthority())
 	{
+		// NOTE: DamageEffectSpecHandle should be valid only on the server (we set it there, but also don't replicate it).
+		check(DamageEffectSpecHandle.Data);
+		
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 		}
-		
+ 
 		Destroy();
 	}
-	// Otherwise, just mark that we've hit something to prevent double effects on destruction
 	else
 	{
+		// Hide the actor and disable collision.
+		// This handles a potential delay in the replication of this projectile's destruction.
+		// It also prevents OnBeginOverlap() to execute more than once for the client.
+		SetActorHiddenInGame(true);
+		Sphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		bHit = true;
 	}
+}
+
+void AAuraProjectile::PlayImpactEffects() const
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 }
 

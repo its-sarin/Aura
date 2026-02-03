@@ -43,6 +43,9 @@ public:
 	TSubclassOf<UGameplayEffect> SecondaryAttributes;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
+	TSubclassOf<UGameplayEffect> TertiaryAttributes;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 	
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass) const;

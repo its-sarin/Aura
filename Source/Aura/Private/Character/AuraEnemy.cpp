@@ -9,6 +9,8 @@
 #include "Aura/Aura.h"
 #include "Components/WidgetComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
+#include "AuraGameplayTags.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AAuraEnemy::AAuraEnemy()
 {
@@ -30,18 +32,18 @@ void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	
 	InitAbilityActorInfo();
 	
-	/* 
-	 * Enemy Health Bar Widget Setup
-	 */
-	// Set the Widget Controller for the Health Bar Widget
+	/* Enemy Health Bar Widget Setup */
+	// -- Set the Widget Controller for the Health Bar Widget
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
 		AuraUserWidget->SetWidgetController(this);
 	}
 	
-	// Bind Health and Max Health changes to update the Health Bar Widget
+	// -- Bind Health and Max Health changes to update the Health Bar Widget
 	if (const UAuraAttributeSet* AuraAS = Cast<UAuraAttributeSet>(AttributeSet))
 	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAS->GetHealthAttribute()).AddLambda(
@@ -57,12 +59,25 @@ void AAuraEnemy::BeginPlay()
 			}	
 		);
 		
-		// Initial Broadcast to set the Health Bar Widget values
+		// -- Bind Hit React Tag changes to trigger Hit Reacts
+		AbilitySystemComponent->RegisterGameplayTagEvent(
+			FAuraGameplayTags::Get().Effects_HitReact, 
+			EGameplayTagEventType::NewOrRemoved)
+				.AddUObject(this, &AAuraEnemy::HitReactTagChanged);
+		
+		// -- Initial Broadcast to set the Health Bar Widget values
 		OnHealthChanged.Broadcast(AuraAS->GetHealth());
 		OnMaxHealthChanged.Broadcast(AuraAS->GetMaxHealth());
 	}
 	/* End Enemy Health Bar Widget Setup */
 	
+}
+
+void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	
+	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 }
 
 void AAuraEnemy::InitAbilityActorInfo()

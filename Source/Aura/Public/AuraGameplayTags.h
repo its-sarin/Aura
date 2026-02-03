@@ -54,6 +54,11 @@ public:
 	 */
 	FGameplayTag Damage;
 	
+	/* 
+	 * ----- Effect Tags ----- 
+	 */
+	FGameplayTag Effects_HitReact;
+	
 	
 private:
 	static FAuraGameplayTags GameplayTags;

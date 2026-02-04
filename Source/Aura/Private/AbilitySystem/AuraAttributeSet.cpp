@@ -5,9 +5,12 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -99,7 +102,7 @@ void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallb
 		}
 		if (Props.SourceController)
 		{
-			ACharacter* SourceCharacter = Props.SourceController->GetCharacter();
+			Props.SourceCharacter = Props.SourceController->GetCharacter();
 		}
 	}
 	
@@ -118,7 +121,7 @@ void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallb
 		}
 		if (Props.TargetController)
 		{
-			ACharacter* TargetCharacter = Props.TargetController->GetCharacter();
+			Props.TargetCharacter = Props.TargetController->GetCharacter();
 		}
 	}
 }
@@ -155,10 +158,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			
 			UE_LOG(LogTemp, Warning, TEXT("Applied %f damage to %s, New Health: %f"), LocalIncomingDamage, *Props.TargetAvatarActor->GetName(), GetHealth());
 			
+			// Floating Damage text
+			ShowFloatingText(Props, LocalIncomingDamage);
+			
 			// Check if the damage was fatal
 			const bool bIsFatal = NewHealth <= 0.f;
 			
-			// If the effect caused damage but did not kill the target, try to trigger hit react abilities on the target
+			// If the damage was fatal, call Die on the Combat Interface. Otherwise, try to activate hit react ability
 			if (bIsFatal)
 			{
 				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
@@ -176,7 +182,17 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	}
 }
 
-// 
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+	}
+}
+
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet, Health, OldHealth);

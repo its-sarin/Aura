@@ -55,6 +55,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	
 	// Disable collision on capsule component to prevent interference with ragdoll physics
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	// Start dissolve effect
+	Dissolve();
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -98,11 +101,34 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void AAuraCharacterBase::AddCharacterAbilities()
+void AAuraCharacterBase::AddCharacterAbilities() const
 {
 	if (!HasAuthority()) return;
 	
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+}
+
+void AAuraCharacterBase::Dissolve()
+{
+	if (IsValid(DissolveMaterialInstance))
+	{
+		// Create dynamic material instance and set it on the mesh
+		UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicMaterialInstance);
+		
+		// Start dissolve timeline in Blueprint
+		StartDissolveTimeline(DynamicMaterialInstance);
+	}
+	
+	if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		// Create dynamic material instance and set it on the weapon
+		UMaterialInstanceDynamic* WeaponDynamicMaterialInstance = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, WeaponDynamicMaterialInstance);
+		
+		// Start dissolve timeline in Blueprint
+		StartWeaponDissolveTimeline(WeaponDynamicMaterialInstance);
+	}
 }
 

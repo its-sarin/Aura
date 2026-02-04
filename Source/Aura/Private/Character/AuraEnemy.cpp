@@ -36,6 +36,8 @@ void AAuraEnemy::BeginPlay()
 	
 	InitAbilityActorInfo();
 	
+	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	
 	/* Enemy Health Bar Widget Setup */
 	// -- Set the Widget Controller for the Health Bar Widget
 	if (UAuraUserWidget* AuraUserWidget = Cast<UAuraUserWidget>(HealthBar->GetUserWidgetObject()))
@@ -105,4 +107,11 @@ void AAuraEnemy::UnHighlightActor()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+void AAuraEnemy::Die()
+{
+	SetLifeSpan(LifeSpan);
+	
+	Super::Die();
 }

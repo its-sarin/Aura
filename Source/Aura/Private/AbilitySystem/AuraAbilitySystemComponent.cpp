@@ -18,7 +18,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		// Create ability spec 
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 		// If it's an Aura ability, add the startup input tag
-		if (const UAuraGameplayAbility * AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
+		if (const UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
 		{
 			// Add the input tag to the ability spec's dynamic source tags
 			AbilitySpec.GetDynamicSpecSourceTags().AddTag(AuraAbility->StartupInputTag);

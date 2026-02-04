@@ -6,6 +6,7 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Controller.h"
+#include "Interaction/CombatInterface.h"
 #include "Net/UnrealNetwork.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -139,18 +140,38 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
+	// If the modified attribute is IncomingDamage, apply the damage to health
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
 		const float LocalIncomingDamage = GetIncomingDamage();
 		SetIncomingDamage(0.f);
 		
+		// Only apply damage if IncomingDamage is greater than 0
 		if (LocalIncomingDamage > 0.f)
 		{
+			// Apply damage to health
 			const float NewHealth = FMath::Clamp(GetHealth() - LocalIncomingDamage, 0.f, GetMaxHealth());
 			SetHealth(NewHealth);
+			
 			UE_LOG(LogTemp, Warning, TEXT("Applied %f damage to %s, New Health: %f"), LocalIncomingDamage, *Props.TargetAvatarActor->GetName(), GetHealth());
 			
+			// Check if the damage was fatal
 			const bool bIsFatal = NewHealth <= 0.f;
+			
+			// If the effect caused damage but did not kill the target, try to trigger hit react abilities on the target
+			if (bIsFatal)
+			{
+				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 		}
 	}
 }

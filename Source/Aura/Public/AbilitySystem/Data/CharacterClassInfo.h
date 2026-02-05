@@ -37,20 +37,23 @@ class AURA_API UCharacterClassInfo : public UDataAsset
 	
 public:
 	
-	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Character")
+	UPROPERTY(EditDefaultsOnly, Category="Character Class Defaults")
 	TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TSubclassOf<UGameplayEffect> SecondaryAttributes;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TSubclassOf<UGameplayEffect> TertiaryAttributes;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TSubclassOf<UGameplayEffect> VitalAttributes;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Class Defaults|Common")
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Damage")
+	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
 	
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass) const;
 };

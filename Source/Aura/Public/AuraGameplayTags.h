@@ -40,7 +40,15 @@ public:
 	FGameplayTag Attributes_Secondary_ManaRegeneration;
 	
 	/* 
-	 * ----- Input Tags ----- 
+	 * -----  Resistances ----- 
+	 */
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+	
+	/* 
+	 * ----- Input ----- 
 	 */
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -50,21 +58,26 @@ public:
 	FGameplayTag InputTag_4;
 	
 	/* 
-	 * ----- Damage Tag ----- 
+	 * ----- Damage ----- 
 	 */
 	FGameplayTag Damage;
 	
 	/* 
-	 * ----- Damage Type Tags ----- 
+	 * ----- Damage Type ----- 
 	 */
 	FGameplayTag Damage_Fire;
-	
-	TArray<FGameplayTag> DamageTypes;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Arcane;
+	FGameplayTag Damage_Physical;
 	
 	/* 
-	 * ----- Effect Tags ----- 
+	 * ----- Effects  ----- 
 	 */
 	FGameplayTag Effects_HitReact;
+	
+	/* ----- End: Gameplay Tags ----- */
+	
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	
 	
 private:

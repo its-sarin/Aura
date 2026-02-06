@@ -94,10 +94,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float Damage = 0.f;
 	
 	// Iterate over all Damage Type Tags and sum their magnitudes from SetByCaller to get total Base Damage
-	for (const FGameplayTag& DamageTypeTag : FAuraGameplayTags::Get().DamageTypes)
+	for (const TTuple<FGameplayTag, FGameplayTag>& TypeToResistancePair : FAuraGameplayTags::Get().DamageTypesToResistances)
 	{
 		// Get Damage Type Magnitude from SetByCaller
-		const float DamageTypeMagnitude = Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		const float DamageTypeMagnitude = Spec.GetSetByCallerMagnitude(TypeToResistancePair.Key);
 		// Add to total Damage
 		Damage += DamageTypeMagnitude;
 	}

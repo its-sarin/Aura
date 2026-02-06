@@ -90,8 +90,17 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Get Character Class Info to access damage calculation curves
 	const UCharacterClassInfo* CharacterClassInfo = UAuraAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 	
-	// Get Damage Set by Caller Magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
+	// Initialize Damage to 0
+	float Damage = 0.f;
+	
+	// Iterate over all Damage Type Tags and sum their magnitudes from SetByCaller to get total Base Damage
+	for (const FGameplayTag& DamageTypeTag : FAuraGameplayTags::Get().DamageTypes)
+	{
+		// Get Damage Type Magnitude from SetByCaller
+		const float DamageTypeMagnitude = Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		// Add to total Damage
+		Damage += DamageTypeMagnitude;
+	}
 	
 	// Capture Critical Hit Chance from Source
 	float SourceCritChance = 0.0f;

@@ -50,10 +50,15 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		
 		// Set damage magnitude via SetByCaller
 		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
-		// -- Scale damage with ability level
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		// -- Assign the scaled damage to the effect spec
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
+		
+		// Iterate over all defined Damage Types and assign their scaled magnitudes to the effect spec
+		for (auto& DamageTypePair : DamageTypes)
+		{
+			// -- Scale damage with ability level
+			const float ScaledDamageTypeValue = DamageTypePair.Value.GetValueAtLevel(GetAbilityLevel());
+			// -- Assign the scaled damage to the effect spec
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypePair.Key, ScaledDamageTypeValue);
+		}
 		
 		// Assign the damage effect spec handle to the projectile
 		Projectile->DamageEffectSpecHandle = SpecHandle;

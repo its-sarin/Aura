@@ -69,6 +69,10 @@ void AAuraProjectile::Destroyed()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	{
+		return;
+	}
 	// NOTE: We set this projectile's Owner (as well as the Instigator, both replicated properties from AActor)
 	// equal to the source ASC's Avatar Actor (character) through UWorld::SpawnActorDeferred().
  
@@ -96,9 +100,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
  
 	if (HasAuthority())
 	{
-		// NOTE: DamageEffectSpecHandle should be valid only on the server (we set it there, but also don't replicate it).
-		check(DamageEffectSpecHandle.Data);
-		
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());

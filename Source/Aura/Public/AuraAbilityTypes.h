@@ -16,7 +16,7 @@ public:
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	
-	/** Returns the actual struct used for serialization, subclasses must override this! */
+	/** Returns the actual struct used for serialization */
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return StaticStruct();
@@ -51,7 +51,7 @@ struct TStructOpsTypeTraits<FAuraGameplayEffectContext> : public TStructOpsTypeT
 {
 	enum
 	{
-		WithNetSerializer = true,
-		WithCopy = true		// Necessary so that TSharedPtr<FHitResult> Data is copied around
+		WithNetSerializer = true, // struct has a NetSerialize function for serializing its state to an FArchive used for network replication.
+		WithCopy = true		// struct can be copied via its copy assignment operator.
 	};
 };

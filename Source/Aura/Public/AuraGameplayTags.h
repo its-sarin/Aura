@@ -80,6 +80,13 @@ public:
 	 */
 	FGameplayTag Abilities_Attack;
 	
+	/* 
+	 * ----- Montage Attack Tags ----- 
+	 */
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag Montage_Attack_LeftHand;
+	
 	
 	/* ----- End: Gameplay Tags ----- */
 	

@@ -32,6 +32,16 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 void AAuraCharacterBase::Die()
 {
 	// Detach weapon
@@ -58,6 +68,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	
 	// Start dissolve effect
 	Dissolve();
+	
+	bDead = true;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -66,7 +78,7 @@ void AAuraCharacterBase::BeginPlay()
 	
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	check(Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);

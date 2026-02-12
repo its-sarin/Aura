@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
 
 
@@ -73,6 +74,12 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		return;
 	}
+	
+	if (UAuraAbilitySystemLibrary::IsOnSameTeam(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
+	{
+		return;
+	}
+	
 	// NOTE: We set this projectile's Owner (as well as the Instigator, both replicated properties from AActor)
 	// equal to the source ASC's Avatar Actor (character) through UWorld::SpawnActorDeferred().
  

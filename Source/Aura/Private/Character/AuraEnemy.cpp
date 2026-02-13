@@ -157,6 +157,8 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation() const
 
 void AAuraEnemy::Die()
 {
+	// Stop the Behavior Tree
+	AuraAIController->GetBrainComponent()->StopLogic(TEXT("Enemy Died"));
 	SetLifeSpan(LifeSpan); 
 	
 	Super::Die();

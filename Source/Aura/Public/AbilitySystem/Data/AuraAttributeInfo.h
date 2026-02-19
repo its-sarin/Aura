@@ -40,6 +40,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FAuraAttributeInfo> AttributeInformation;
 	
-private:
-	void UpdateAttributeInformation();
+// private:
+// 	void UpdateAttributeInformation();
 };

@@ -8,6 +8,8 @@
 #include "OverlayWidgetController.generated.h"
 
 
+class UAuraAbilitySystemComponent;
+class UAbilityInfo;
 struct FOnAttributeChangeData;
 
 USTRUCT(BlueprintType)
@@ -63,8 +65,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
 	template<typename T>
 	T* GetDataTableRow(UDataTable* DataTable, const FGameplayTag& Tag) const;
+	
+	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraAbilitySystemComponent);
 };
 
 template <typename T>

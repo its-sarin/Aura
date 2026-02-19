@@ -50,6 +50,7 @@ public:
 	/* 
 	 * ----- Input ----- 
 	 */
+	FGameplayTag InputTag;
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
 	FGameplayTag InputTag_1;
@@ -78,6 +79,7 @@ public:
 	/* 
 	 * ----- Abilities ----- 
 	 */
+	FGameplayTag Abilities;
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 	FGameplayTag Abilities_Fire_FireBolt;

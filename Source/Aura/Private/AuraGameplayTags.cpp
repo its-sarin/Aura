@@ -52,6 +52,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Attributes.Resistance.Physical"), FString("Resistance to Physical damage"));
 	
 	// Input
+	GameplayTags.InputTag = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag"), FString("Parent tag for input"));
 	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.LMB"), FString("Input Tag for Left Mouse Button"));
 	GameplayTags.InputTag_RMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -84,6 +86,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Effects.HitReact"), FString("Hit React Effect"));
 	
 	// Abilities
+	GameplayTags.Abilities = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities"), FString("Parent tag for abilities"));
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Attack"), FString("Attack Ability Tag"));
 	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(

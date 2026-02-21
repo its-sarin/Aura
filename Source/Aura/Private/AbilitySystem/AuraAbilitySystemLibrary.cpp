@@ -12,6 +12,7 @@
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "Engine/OverlapResult.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
@@ -191,4 +192,9 @@ bool UAuraAbilitySystemLibrary::IsOnSameTeam(const AActor* FirstActor, const AAc
 	const bool bBothAreEnemies = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
 	
 	return bBothArePlayers || bBothAreEnemies;
+}
+
+int32 UAuraAbilitySystemLibrary::GetAwardedXP(const UCharacterClassInfo* CharacterClassInfo, const int32 Level)
+{
+	return CharacterClassInfo->XPReward.GetValueAtLevel(Level);
 }

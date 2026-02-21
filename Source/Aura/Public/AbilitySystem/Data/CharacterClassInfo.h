@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
 #include "CharacterClassInfo.generated.h"
 
@@ -60,6 +61,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|Damage")
 	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Common Class Defaults|XP Rewards")
+	FScalableFloat XPReward;
 	
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass) const;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
@@ -36,6 +37,7 @@ public:
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
 	virtual int32 GetMinionCount_Implementation() const override { return MinionCount; }
 	virtual void IncrementMinionCount_Implementation(const int32 Amount) override { MinionCount += Amount; }
+	virtual ECharacterClass GetCharacterClass_Implementation() override { return CharacterClass; }
 	/** End Combat Interface */
 	
 	UFUNCTION(NetMulticast, Reliable)
@@ -85,6 +87,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultResistances;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Setup|Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 	
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;

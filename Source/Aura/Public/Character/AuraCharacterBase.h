@@ -127,6 +127,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Setup|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 	
+	UPROPERTY(EditAnywhere, Category="Setup|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
+	
 	UPROPERTY(EditAnywhere, Category="Setup|Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 };

@@ -6,6 +6,7 @@
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Aura/AuraLogChannels.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Interaction/CombatInterface.h"
@@ -147,15 +148,17 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 	
+	// If the modified attribute is Health or Mana, clamp it between 0 and max values
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
-		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
+		// UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
 	}
+	
 	// If the modified attribute is IncomingDamage, apply the damage to health
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
@@ -169,7 +172,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			const float NewHealth = FMath::Clamp(GetHealth() - LocalIncomingDamage, 0.f, GetMaxHealth());
 			SetHealth(NewHealth);
 			
-			UE_LOG(LogTemp, Warning, TEXT("Applied %f damage to %s, New Health: %f"), LocalIncomingDamage, *Props.TargetAvatarActor->GetName(), GetHealth());
+			// UE_LOG(LogTemp, Warning, TEXT("Applied %f damage to %s, New Health: %f"), LocalIncomingDamage, *Props.TargetAvatarActor->GetName(), GetHealth());
 			
 			// Get Block and Critical Hit results from Effect Context
 			const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
@@ -196,6 +199,15 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
 		}
+	}
+	
+	// If the modified attribute is IncomingXP, handle XP changes (e.g. show floating text, level up, etc.)
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.f);
+		UE_LOG(LogAura, Warning, TEXT("Incoming XP changed on %s, XP: %f"), *Props.TargetAvatarActor->GetName(), LocalIncomingXP);
+		// TODO: Handle incoming XP changes (e.g. show floating text, level up, etc.)
 	}
 }
 

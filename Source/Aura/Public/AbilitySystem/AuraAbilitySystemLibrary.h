@@ -56,5 +56,5 @@ public:
 	static bool IsOnSameTeam(const AActor* FirstActor, const AActor* SecondActor);
 	
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
-	static int32 GetAwardedXP(const UCharacterClassInfo* CharacterClassInfo, const int32 Level);
+	static int32 GetAwardedXPForClassAndLevel(const UObject* WorldContextObject, const ECharacterClass CharacterClass, const int32 Level);
 };

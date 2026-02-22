@@ -194,7 +194,15 @@ bool UAuraAbilitySystemLibrary::IsOnSameTeam(const AActor* FirstActor, const AAc
 	return bBothArePlayers || bBothAreEnemies;
 }
 
-int32 UAuraAbilitySystemLibrary::GetAwardedXP(const UCharacterClassInfo* CharacterClassInfo, const int32 Level)
+int32 UAuraAbilitySystemLibrary::GetAwardedXPForClassAndLevel(const UObject* WorldContextObject,
+	const ECharacterClass CharacterClass, const int32 Level)
 {
-	return CharacterClassInfo->XPReward.GetValueAtLevel(Level);
+	const UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (!CharacterClassInfo) return 0;
+
+	const FCharacterClassDefaultInfo& Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	
+	const float XPReward = Info.XPReward.GetValueAtLevel(Level);
+	
+	return FMath::RoundToInt(XPReward);
 }

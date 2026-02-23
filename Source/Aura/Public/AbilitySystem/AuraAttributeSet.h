@@ -249,4 +249,6 @@ private:
 	static void SetEffectProperties(const struct FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
-};
+	
+	void SendXPEvent(const FEffectProperties& Props);
+};	

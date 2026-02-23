@@ -2,6 +2,8 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "GameplayEffectExtension.h"
@@ -10,6 +12,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
@@ -191,6 +194,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					CombatInterface->Die();
 				}
+				SendXPEvent(Props);
 			}
 			else
 			{
@@ -207,7 +211,33 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 		UE_LOG(LogAura, Warning, TEXT("Incoming XP changed on %s, XP: %f"), *Props.TargetAvatarActor->GetName(), LocalIncomingXP);
-		// TODO: Handle incoming XP changes (e.g. show floating text, level up, etc.)
+		
+		// TODO: Check if we should level up
+		
+		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);	
+		}
+	}
+}
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
+{
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter))
+	{
+		// Get Target level and class from Combat Interface
+		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+		
+		// Get XP reward for killing the target based on their class and level
+		const int32 XPReward = UAuraAbilitySystemLibrary::GetAwardedXPForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+		
+		// Construct and send gameplay event to source character with XP reward as magnitude
+		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+		FGameplayEventData Payload;
+		Payload.EventTag = GameplayTags.Attributes_Meta_IncomingXP;
+		Payload.EventMagnitude = XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
 	}
 }
 

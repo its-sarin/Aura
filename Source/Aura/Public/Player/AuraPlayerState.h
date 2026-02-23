@@ -38,7 +38,7 @@ public:
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
 	FOnPlayerStatChangedSignature OnLevelChangedDelegate;
 	void SetLevel(const int32 InLevel);
-	void AddLevel(const int32 InLevel);
+	void AddToLevel(const int32 InLevel);
 	
 	/**
 	 * Player XP 
@@ -46,7 +46,7 @@ public:
 	FORCEINLINE int32 GetPlayerXP() const { return XP; }
 	FOnPlayerStatChangedSignature OnXPChangedDelegate;
 	void SetXP(const int32 InXP);
-	void AddXP(const int32 InXP);
+	void AddToXP(const int32 InXP);
 	
 protected:
 	UPROPERTY(VisibleAnywhere)

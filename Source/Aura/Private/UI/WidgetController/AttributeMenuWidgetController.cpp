@@ -4,6 +4,7 @@
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AuraAttributeInfo.h"
+#include "Player/AuraPlayerState.h"
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
@@ -32,6 +33,21 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}	
 		);
 	}
+	
+	// Bind to player state delegates
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPlayerState->OnAttributePointsChangedDelegate.AddLambda(
+		[this](int32 AttributePoints)
+		{
+			AttributePointsChangedDelegate.Broadcast(AttributePoints);
+		}	
+	);
+	AuraPlayerState->OnSpellPointsChangedDelegate.AddLambda(
+		[this](int32 SpellPoints)
+		{
+			SpellPointsChangedDelegate.Broadcast(SpellPoints);
+		}	
+	);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag,

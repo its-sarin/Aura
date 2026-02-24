@@ -11,7 +11,7 @@ class ULevelUpInfo;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /* NewXP or NewLevel */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*NewValue*/);
 
 /**
  * 
@@ -48,6 +48,22 @@ public:
 	void SetXP(const int32 InXP);
 	void AddToXP(const int32 InXP);
 	
+	/**
+	 * Attribute Points 
+	 */
+	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
+	FOnPlayerStatChanged OnAttributePointsChangedDelegate;
+	void SetAttributePoints(const int32 InAttributePoints);
+	void AddToAttributePoints(const int32 InAttributePoints);
+	
+	/**
+	 * Spell Points 
+	 */
+	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
+	FOnPlayerStatChanged OnSpellPointsChangedDelegate;
+	void SetSpellPoints(const int32 InSpellPoints);
+	void AddToSpellPoints(const int32 InSpellPoints);
+	
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -73,4 +89,22 @@ private:
 	
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
+	
+	/**
+	 * Attribute Points 
+	 */
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_AttributePoints)
+	int32 AttributePoints = 0;
+	
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldAttributePoints);
+	
+	/**
+	 * Spell Points 
+	 */
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_SpellPoints)
+	int32 SpellPoints = 0;
+	
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldSpellPoints);
 };

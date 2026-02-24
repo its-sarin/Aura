@@ -33,7 +33,7 @@ public:
 	/** End Enemy Interface */
 	
 	/** Combat Interface */
-	FORCEINLINE virtual int32 GetPlayerLevel() override { return Level; }
+	FORCEINLINE virtual int32 GetPlayerLevel_Implementation() override { return Level; }
 	virtual void Die() override;
 	/** End Combat Interface */
 

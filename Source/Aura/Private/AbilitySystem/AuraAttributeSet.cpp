@@ -214,8 +214,37 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 		
 		// TODO: Check if we should level up
 		
-		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
 		{
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
+			
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			
+			const int32 LevelsGained = NewLevel - CurrentLevel;
+			
+			if (LevelsGained > 0)
+			{
+				// Lookup and store Attribute and Spell Point rewards
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+				
+				// Add levels to player level
+				IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, LevelsGained);
+				
+				// Add Attribute and Spell Points to player
+				IPlayerInterface::Execute_AddAttributePoints(Props.SourceCharacter, AttributePointsReward);
+				IPlayerInterface::Execute_AddSpellPoints(Props.SourceCharacter, SpellPointsReward);
+
+				// Fill up Health and Mana
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+				
+				UE_LOG(LogAura, Warning, TEXT("%s leveled up from level %d to level %d!"), *Props.SourceAvatarActor->GetName(), CurrentLevel, NewLevel);
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
+			}
+			
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);	
 		}
 	}
@@ -223,10 +252,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props)
 {
-	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter))
+	if (Props.TargetCharacter->Implements<UCombatInterface>())
 	{
 		// Get Target level and class from Combat Interface
-		const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
 		
 		// Get XP reward for killing the target based on their class and level

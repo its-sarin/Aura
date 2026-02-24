@@ -102,9 +102,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 	
-	// Cast Avatars to Combat Interfaces
-	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
+	// Get Source Player Level from Combat Interface
+	int32 SourcePlayerLevel = 1;
+	if (SourceAvatar->Implements<UCombatInterface>())
+	{
+		SourcePlayerLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
+	}
+	
+	// Get Target Player Level from Combat Interface
+	int32 TargetPlayerLevel = 1;
+	if (TargetAvatar->Implements<UCombatInterface>())
+	{
+		TargetPlayerLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
+	}
 	
 	// Get the Effect Spec that triggered this execution
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
@@ -163,7 +173,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	// Use Character Class Info to find Critical Hit Resistance Coefficient
 	const FRealCurve* CritResistCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("CriticalHitResistance"), FString());
-	const float CritResistCoefficient = CritResistCurve->Eval(TargetCombatInterface->GetPlayerLevel());
+	const float CritResistCoefficient = CritResistCurve->Eval(TargetPlayerLevel);
 	
 	// Determine if Critical Hit occurs after resistance is applied
 	const bool bCriticalHit = FMath::RandRange(0.0f, 100.0f) <= (SourceCritChance - TargetCritResistance * CritResistCoefficient);
@@ -201,14 +211,14 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Use Character Class Info to find Armor Penetration curve and evaluate it at the Source's Player Level
 	const FRealCurve* ArmorPenCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("ArmorPenetration"), FString());
-	const float ArmorPenCoefficient = ArmorPenCurve->Eval(SourceCombatInterface->GetPlayerLevel());
+	const float ArmorPenCoefficient = ArmorPenCurve->Eval(SourcePlayerLevel);
 	
 	// Calculate Effective Armor after Penetration
 	const float EffectiveArmor = TargetArmor * (100.f - SourceArmorPenetration * ArmorPenCoefficient) / 100.f;
 	
 	// Use Character Class Info to find Effective Armor curve and evaluate it at the Target's Player Level
 	const FRealCurve* EffectiveArmorCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("EffectiveArmor"), FString());
-	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(TargetCombatInterface->GetPlayerLevel());
+	const float EffectiveArmorCoefficient = EffectiveArmorCurve->Eval(TargetPlayerLevel);
 	
 	// Reduce Damage by Effective Armor 
 	Damage *= (100.f - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;

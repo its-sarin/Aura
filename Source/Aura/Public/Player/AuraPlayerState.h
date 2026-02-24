@@ -11,7 +11,7 @@ class ULevelUpInfo;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32 /* NewXP or NewLevel */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /* NewXP or NewLevel */);
 
 /**
  * 
@@ -36,7 +36,7 @@ public:
 	 * Player Level 
 	 */
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
-	FOnPlayerStatChangedSignature OnLevelChangedDelegate;
+	FOnPlayerStatChanged OnLevelChangedDelegate;
 	void SetLevel(const int32 InLevel);
 	void AddToLevel(const int32 InLevel);
 	
@@ -44,7 +44,7 @@ public:
 	 * Player XP 
 	 */
 	FORCEINLINE int32 GetPlayerXP() const { return XP; }
-	FOnPlayerStatChangedSignature OnXPChangedDelegate;
+	FOnPlayerStatChanged OnXPChangedDelegate;
 	void SetXP(const int32 InXP);
 	void AddToXP(const int32 InXP);
 	

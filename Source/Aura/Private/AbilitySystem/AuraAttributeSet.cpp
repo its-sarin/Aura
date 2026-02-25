@@ -237,9 +237,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				IPlayerInterface::Execute_AddAttributePoints(Props.SourceCharacter, AttributePointsReward);
 				IPlayerInterface::Execute_AddSpellPoints(Props.SourceCharacter, SpellPointsReward);
 
-				// Fill up Health and Mana
-				SetHealth(GetMaxHealth());
-				SetMana(GetMaxMana());
+				// Mark Health and Mana to be topped off in PostAttributeChange
+				bTopOffHealth = true;
+				bTopOffMana = true;
 				
 				UE_LOG(LogAura, Warning, TEXT("%s leveled up from level %d to level %d!"), *Props.SourceAvatarActor->GetName(), CurrentLevel, NewLevel);
 				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
@@ -247,6 +247,24 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);	
 		}
+	}
+}
+
+/** Called just after any modification happens to an attribute. */
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+	
+	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bTopOffHealth = false;
+	}
+	
+	if (Attribute == GetMaxManaAttribute() && bTopOffMana)
+	{
+		SetMana(GetMaxMana());
+		bTopOffMana = false;
 	}
 }
 

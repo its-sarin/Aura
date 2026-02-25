@@ -33,7 +33,9 @@ public:
 	virtual int32 GetSpellPointsReward_Implementation(int32 Level) const override;
 	virtual void AddToPlayerLevel_Implementation(int32 LevelsGained) override;
 	virtual void AddAttributePoints_Implementation(int32 InAttributePoints) override;
+	virtual int32 GetAttributePoints_Implementation() const override;
 	virtual void AddSpellPoints_Implementation(int32 InSpellPoints) override;
+	virtual int32 GetSpellPoints_Implementation() const override;
 	/** End Player Interface */
 	
 	/** Combat Interface */

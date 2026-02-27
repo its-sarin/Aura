@@ -8,8 +8,8 @@
 
 class ULevelUpInfo;
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /*AssetTags*/);
-DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, UAuraAbilitySystemComponent* /*AuraAbilitySystemComponent*/);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec& /*AbilitySpec*/);
+DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 
 /**
  * 

@@ -12,6 +12,7 @@
 #include "UI/HUD/AuraHUD.h"
 #include "Engine/OverlapResult.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "Game/AuraGameInstance.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 
 bool UAuraAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWidgetControllerParams, AAuraHUD*& OutAuraHUD)
@@ -144,18 +145,22 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
-	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (!AuraGameMode) return nullptr;
+	const UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
+	if (!AuraGameInstance) return nullptr;
+	// const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	// if (!AuraGameMode) return nullptr;
 	
-	return AuraGameMode->CharacterClassInfo;
+	return AuraGameInstance->CharacterClassInfo;
 }
 
 UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
 {
-	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (!AuraGameMode) return nullptr;
+	const UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(UGameplayStatics::GetGameInstance(WorldContextObject));
+	if (!AuraGameInstance) return nullptr;
+	// const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	// if (!AuraGameMode) return nullptr;
 	
-	return AuraGameMode->AbilityInfo;
+	return AuraGameInstance->AbilityInfo;
 }
 
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)

@@ -248,11 +248,13 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 			return true;
 		}
 	}
+	// If the player doesn't have the ability, we can show the locked description with the level requirement for that ability
 	if (const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor()))
 	{
 		OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(AbilityTag).LevelRequirement);
 		OutNextLevelDescription = FString();
 	}
+	// If the ability tag is invalid, we can't show any description
 	else
 	{
 		OutDescription = FString();

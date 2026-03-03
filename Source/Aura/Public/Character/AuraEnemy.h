@@ -36,6 +36,8 @@ public:
 	FORCEINLINE virtual int32 GetPlayerLevel_Implementation() override { return Level; }
 	virtual void Die() override;
 	/** End Combat Interface */
+	
+	virtual void MulticastHandleDeath_Implementation() override;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;

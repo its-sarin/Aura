@@ -163,3 +163,11 @@ void AAuraEnemy::Die()
 	
 	Super::Die();
 }
+
+void AAuraEnemy::MulticastHandleDeath_Implementation()
+{
+	// Prevents the health bar from falling through the floor when the enemy dies (occurs only on the client)
+	HealthBar->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	
+	Super::MulticastHandleDeath_Implementation();
+}

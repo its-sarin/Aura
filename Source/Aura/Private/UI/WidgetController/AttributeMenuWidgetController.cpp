@@ -38,17 +38,10 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	}
 	
 	// Bind to player state delegates
-	
 	GetAuraPlayerState()->OnAttributePointsChangedDelegate.AddLambda(
-		[this](int32 AttributePoints)
+		[this](const int32 AttributePoints)
 		{
 			AttributePointsChangedDelegate.Broadcast(AttributePoints);
-		}	
-	);
-	GetAuraPlayerState()->OnSpellPointsChangedDelegate.AddLambda(
-		[this](int32 SpellPoints)
-		{
-			SpellPointsChangedDelegate.Broadcast(SpellPoints);
 		}	
 	);
 }

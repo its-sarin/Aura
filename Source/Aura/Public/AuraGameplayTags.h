@@ -89,8 +89,17 @@ public:
 	FGameplayTag Abilities;
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
-	FGameplayTag Abilities_Fire_FireBolt;
 	FGameplayTag Abilities_HitReact;
+	
+	/*
+	 * ----- Abilities - Fire ----- 
+	 */
+	FGameplayTag Abilities_Fire_FireBolt;
+	
+	/* 
+	 * ----- Abilities - Lightning ----- 
+	 */
+	FGameplayTag Abilities_Lightning_Electrocute;
 	
 	/* 
 	 * ----- Ability Statuses ----- 
@@ -113,6 +122,7 @@ public:
 	 */
 	FGameplayTag Cooldown;
 	FGameplayTag Cooldown_Fire_FireBolt;
+	FGameplayTag Cooldown_Lightning_Electrocute;
 	
 	/* 
 	 * ----- Combat Sockets ----- 

@@ -100,10 +100,16 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Attack"), FString("Attack Ability Tag"));
 	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Summon"), FString("Summon Ability Tag"));
-	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Abilities.Fire.FireBolt"), FString("Fire Bolt Ability Tag"));
 	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.HitReact"), FString("Hit React Ability Tag"));
+	
+	// Abilities - Fire
+	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Fire.FireBolt"), FString("Fire Bolt Ability Tag"));
+	
+	// Abilities - Lightning
+	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Lightning.Electrocute"), FString("Electrocute Ability Tag"));
 	
 	// Ability Statuses
 	GameplayTags.Abilities_Status_Locked = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -128,6 +134,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Cooldown"), FString("Parent tag for cooldowns"));
 	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Cooldown.Fire.FireBolt"), FString("FireBolt Cooldown Tag"));
+	GameplayTags.Cooldown_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Cooldown.Lightning.Electrocute"), FString("Electrocute Cooldown Tag"));
 	
 	// Combat Sockets
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(

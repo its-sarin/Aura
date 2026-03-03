@@ -111,6 +111,21 @@ void AAuraCharacter::AddToPlayerLevel_Implementation(int32 LevelsGained)
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	AuraPlayerState->AddToLevel(LevelsGained);
+	
+	// Update ability statuses based on the new level
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->UpdateAbilityStatuses(AuraPlayerState->GetPlayerLevel());
+	}
+	
+	
+}
+
+int32 AAuraCharacter::GetPlayerLevel_Implementation()
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	return AuraPlayerState->GetPlayerLevel();
 }
 
 void AAuraCharacter::AddAttributePoints_Implementation(int32 InAttributePoints)
@@ -139,13 +154,6 @@ int32 AAuraCharacter::GetSpellPoints_Implementation() const
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->GetSpellPoints();
-}
-
-int32 AAuraCharacter::GetPlayerLevel_Implementation()
-{
-	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
-	check(AuraPlayerState);
-	return AuraPlayerState->GetPlayerLevel();
 }
 
 // Called when the character is possessed by a controller

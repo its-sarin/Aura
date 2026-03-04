@@ -51,7 +51,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
 	
-	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
+	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, const int32 AbilityLevel, FString& OutDescription, FString& OutNextLevelDescription);
+	
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 	
 protected:
 	
